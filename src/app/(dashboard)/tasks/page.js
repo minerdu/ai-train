@@ -1,7 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { trainingSkills, trainingTasks, taskSummary, managerCards } from '@/lib/trainingData';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { apiFetch } from '@/lib/basePath';
 import styles from './page.module.css';
 
 const tabs = [
@@ -25,28 +25,80 @@ const sourceLabels = {
   ai_generated: 'AI生成',
   group_tutor: '群组教学',
   ops_signal: '运营信号',
+  autonomous_engine: '自主引擎',
+  manual: '人工创建',
+  manual_command: '人工指令',
 };
+
+const EMPTY_DASHBOARD = {
+  tasks: [],
+  skills: [],
+  manager_cards: { weak_scenarios: [] },
+  stats: {
+    pending: 0,
+    toExecute: 0,
+    completed: 0,
+    rejected: 0,
+    rejectRate: 0,
+  },
+};
+
+async function parseJsonResponse(res, fallbackMessage) {
+  const data = await res.json().catch(() => null);
+  if (!res.ok) {
+    throw new Error(data?.message || data?.error?.message || fallbackMessage);
+  }
+  return data;
+}
 
 export default function TasksPage() {
   const [activeTab, setActiveTab] = useState('pending');
   const [selectedTask, setSelectedTask] = useState(null);
   const [isBatchMode, setIsBatchMode] = useState(false);
   const [selectedTaskIds, setSelectedTaskIds] = useState(new Set());
+  const [dashboard, setDashboard] = useState(EMPTY_DASHBOARD);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
+  const [busyTaskId, setBusyTaskId] = useState('');
 
-  const stats = {
-    pending: trainingTasks.filter((task) => task.status === 'pending').length,
-    toExecute: trainingTasks.filter((task) => task.status === 'running').length,
-    completed: taskSummary.completed_count,
-    rejected: taskSummary.overdue_count,
-    rejectRate: Math.round((taskSummary.overdue_count / Math.max(taskSummary.today_task_count, 1)) * 100),
-  };
+  const loadTasks = useCallback(async () => {
+    setIsLoading(true);
+    setLoadError('');
+    try {
+      const data = await parseJsonResponse(await apiFetch('/api/tasks'), '加载培训任务失败');
+      setDashboard({
+        ...EMPTY_DASHBOARD,
+        ...data,
+        manager_cards: {
+          ...EMPTY_DASHBOARD.manager_cards,
+          ...(data.manager_cards || {}),
+        },
+        stats: {
+          ...EMPTY_DASHBOARD.stats,
+          ...(data.stats || {}),
+        },
+      });
+    } catch (error) {
+      setLoadError(error.message || '加载培训任务失败');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadTasks();
+  }, [loadTasks]);
+
+  const tasks = useMemo(() => dashboard.tasks || [], [dashboard.tasks]);
+  const skills = useMemo(() => dashboard.skills || [], [dashboard.skills]);
+  const stats = dashboard.stats || EMPTY_DASHBOARD.stats;
 
   const filteredTasks = useMemo(() => {
-    if (activeTab === 'running') return trainingTasks.filter((task) => task.status === 'running');
-    if (activeTab === 'completed') return trainingTasks.filter((task) => task.status === 'completed');
-    if (activeTab === 'overdue') return trainingTasks.filter((task) => task.status === 'overdue');
-    return trainingTasks.filter((task) => task.status === 'pending');
-  }, [activeTab]);
+    if (activeTab === 'running') return tasks.filter((task) => task.status === 'running');
+    if (activeTab === 'completed') return tasks.filter((task) => task.status === 'completed');
+    if (activeTab === 'overdue') return tasks.filter((task) => task.status === 'overdue');
+    return tasks.filter((task) => task.status === 'pending');
+  }, [activeTab, tasks]);
 
   const toggleTask = (id) => {
     setSelectedTaskIds((current) => {
@@ -55,6 +107,48 @@ export default function TasksPage() {
       else next.add(id);
       return next;
     });
+  };
+
+  const startTask = async (task) => {
+    const taskId = task.task_id || task.id;
+    setBusyTaskId(taskId);
+    setLoadError('');
+    try {
+      await parseJsonResponse(
+        await apiFetch(`/api/v1/training/tasks/${taskId}/start`, { method: 'POST' }),
+        '启动培训任务失败',
+      );
+      await loadTasks();
+      if (selectedTask?.task_id === taskId) setSelectedTask(null);
+    } catch (error) {
+      setLoadError(error.message || '启动培训任务失败');
+    } finally {
+      setBusyTaskId('');
+    }
+  };
+
+  const askAi = async (task) => {
+    const taskId = task.task_id || task.id;
+    setBusyTaskId(taskId);
+    setLoadError('');
+    try {
+      await parseJsonResponse(
+        await apiFetch('/api/ai-command', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            command: `围绕「${task.title}」生成补练或实战复盘任务`,
+            current_tab: 'tasks',
+          }),
+        }),
+        'AI生成补练失败',
+      );
+      await loadTasks();
+    } catch (error) {
+      setLoadError(error.message || 'AI生成补练失败');
+    } finally {
+      setBusyTaskId('');
+    }
   };
 
   return (
@@ -105,6 +199,12 @@ export default function TasksPage() {
         ) : null}
       </div>
 
+      {loadError ? (
+        <div className={styles.emptyState} style={{ marginBottom: 12 }}>
+          <p>{loadError}</p>
+        </div>
+      ) : null}
+
       <div className={styles.taskList}>
         <section className={styles.optimizationPanel}>
           <div className={styles.optimizationPanelHead}>
@@ -116,7 +216,7 @@ export default function TasksPage() {
             </div>
           </div>
           <div className={styles.optimizationSummaryRow}>
-            {managerCards.weak_scenarios.map((scenario) => (
+            {(dashboard.manager_cards?.weak_scenarios || []).map((scenario) => (
               <span key={scenario} className={styles.optimizationSummaryChip}>
                 <span>⚡ {scenario}</span>
                 <strong>补练</strong>
@@ -125,21 +225,26 @@ export default function TasksPage() {
           </div>
         </section>
 
-        {filteredTasks.length === 0 ? (
+        {isLoading ? (
+          <div className={styles.emptyState}>
+            <p>正在同步AI培训任务队列...</p>
+          </div>
+        ) : filteredTasks.length === 0 ? (
           <div className={styles.emptyState}>
             <span className={styles.emptyIcon}>✅</span>
             <p>暂无{tabs.find((tab) => tab.key === activeTab)?.label}任务</p>
           </div>
         ) : (
           filteredTasks.map((task, index) => {
-            const skill = trainingSkills.find((item) => item.version_id === task.source_skill_version_id);
+            const taskId = task.task_id || task.id;
+            const skill = skills.find((item) => item.version_id === task.source_skill_version_id);
             return (
               <div
-                key={task.task_id}
-                className={`${styles.taskCard} animate-fadeInUp ${selectedTaskIds.has(task.task_id) ? styles.selectedTask : ''}`}
+                key={taskId}
+                className={`${styles.taskCard} animate-fadeInUp ${selectedTaskIds.has(taskId) ? styles.selectedTask : ''}`}
                 style={{ animationDelay: `${index * 60}ms` }}
                 onClick={() => {
-                  if (isBatchMode) toggleTask(task.task_id);
+                  if (isBatchMode) toggleTask(taskId);
                   else setSelectedTask(task);
                 }}
               >
@@ -148,7 +253,7 @@ export default function TasksPage() {
                     {isBatchMode ? (
                       <input
                         type="checkbox"
-                        checked={selectedTaskIds.has(task.task_id)}
+                        checked={selectedTaskIds.has(taskId)}
                         readOnly
                         style={{ marginRight: 12, transform: 'scale(1.2)' }}
                       />
@@ -161,10 +266,10 @@ export default function TasksPage() {
                       </span>
                       <div className={styles.originTagRow}>
                         <span className={styles.originBadge} style={{ color: '#2563eb', background: '#eff6ff' }}>
-                          来自 {skill?.skill_name || 'TrainingSkill'}
+                          来自 {task.source_skill_name || skill?.skill_name || 'TrainingSkill'}
                         </span>
                         <span className={styles.originBadge} style={{ color: '#059669', background: '#ecfdf5' }}>
-                          {task.source_agent_run_id}
+                          {task.source_agent_run_id || 'TrainingAgent'}
                         </span>
                       </div>
                     </div>
@@ -188,12 +293,19 @@ export default function TasksPage() {
 
                 <div className={styles.taskFooter}>
                   <span className={styles.taskTime}>⏰ {task.due_at}</span>
-                  <span className={styles.taskCustomer}>📤 分配给 新天地店员工</span>
+                  <span className={styles.taskCustomer}>📤 分配给 {task.assigned_to || '新天地店员工'}</span>
                 </div>
 
                 <div className={styles.taskActions} onClick={(event) => event.stopPropagation()}>
-                <button className={styles.btnApprove}>开始任务</button>
-                  <button className={styles.btnEditApprove}>问AI</button>
+                  <button
+                    className={styles.btnApprove}
+                    onClick={() => startTask(task)}
+                    disabled={busyTaskId === taskId || task.approvalStatus === 'pending'}
+                    title={task.approvalStatus === 'pending' ? '审批通过后可执行' : '开始任务'}
+                  >
+                    {busyTaskId === taskId ? '处理中' : task.approvalStatus === 'pending' ? '待审批' : '开始任务'}
+                  </button>
+                  <button className={styles.btnEditApprove} onClick={() => askAi(task)} disabled={busyTaskId === taskId}>问AI</button>
                   <button className={styles.btnReject}>稍后提醒</button>
                 </div>
               </div>
@@ -222,7 +334,7 @@ export default function TasksPage() {
                 <div className={styles.drawerAiBox}>
                   <p>{selectedTask.description}</p>
                   <span className={styles.drawerAiMeta}>
-                    {sourceLabels[selectedTask.source_type]} · {selectedTask.source_agent_run_id}
+                    {sourceLabels[selectedTask.source_type] || 'AI培训'} · {selectedTask.source_agent_run_id || 'TrainingAgent'}
                   </span>
                 </div>
               </div>
@@ -232,8 +344,14 @@ export default function TasksPage() {
               </div>
             </div>
             <div className={styles.drawerActions}>
-              <button className={styles.drawerBtnPrimary}>开始任务</button>
-              <button className={styles.drawerBtnDanger}>生成补练</button>
+              <button
+                className={styles.drawerBtnPrimary}
+                onClick={() => startTask(selectedTask)}
+                disabled={busyTaskId === (selectedTask.task_id || selectedTask.id) || selectedTask.approvalStatus === 'pending'}
+              >
+                {selectedTask.approvalStatus === 'pending' ? '等待审批' : '开始任务'}
+              </button>
+              <button className={styles.drawerBtnDanger} onClick={() => askAi(selectedTask)}>生成补练</button>
             </div>
           </div>
         </div>

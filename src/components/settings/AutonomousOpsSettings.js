@@ -55,7 +55,7 @@ export default function AutonomousOpsSettings({ onBack }) {
           AI 自主培训引擎
         </div>
         <p style={{ fontSize: 13, color: 'var(--color-text-secondary)', margin: '0 0 16px 0' }}>
-          基于V3培训旅程、员工/店长/总部角色、30天落地计划和AI运营只读信号，智能生成核心训练、实战陪跑、补练建议和审核动作。
+          基于V3培训旅程、员工/店长/总部角色、30天落地计划和AI运营只读信号，智能生成核心训练、实战陪跑、补练建议、审批与执行动作。
         </p>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', background: enabled ? 'linear-gradient(135deg, #E6F7EF, #F0FFF4)' : '#f8fafc', borderRadius: 12, border: `1px solid ${enabled ? '#B7EB8F' : '#e2e8f0'}`, marginBottom: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -68,6 +68,18 @@ export default function AutonomousOpsSettings({ onBack }) {
             <input type="checkbox" id="opsEnabled" checked={enabled} onChange={e => setEnabled(e.target.checked)} />
             <label htmlFor="opsEnabled"></label>
           </div>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10 }}>
+          {[
+            { title: '扫描频率', desc: '8:00-22:00 每小时扫描；其他时间每6小时扫描' },
+            { title: '扫描对象', desc: '员工/店长/总部状态、培训计划、完成率和AI运营只读信号' },
+            { title: '执行判断', desc: '按角色权限、TrainingSkill、红线规则决定任务/实战/审批' },
+          ].map((item) => (
+            <div key={item.title} style={{ padding: 12, borderRadius: 12, background: '#f8fafc', border: '1px solid var(--color-border-light)' }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: 5 }}>{item.title}</div>
+              <div style={{ fontSize: 12, lineHeight: 1.6, color: 'var(--color-text-secondary)' }}>{item.desc}</div>
+            </div>
+          ))}
         </div>
       </div>
 

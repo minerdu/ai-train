@@ -2,7 +2,7 @@
  * Cron Worker — 进程内定时执行调度器
  *
  * 在 Next.js Server 进程中以 setInterval 方式轮询 `/api/cron/engine`，
- * 自动执行已审批+已排期的任务。
+ * 自动执行已审批+已排期的培训任务。
  *
  * 设计原则：
  * - 单例模式：避免多次 import 导致重复启动
@@ -70,7 +70,7 @@ async function tick() {
 }
 
 /**
- * 执行一次自主招商引擎扫描（9 旅程 Agent 编排）
+ * 执行一次自主培训引擎扫描（9阶段训练旅程 Agent 编排）
  */
 let _autonomousIntervalId = null;
 
@@ -93,7 +93,7 @@ async function tickAutonomous() {
     if (data.status === 'idle') return;
 
     console.log(
-      `[CronWorker] Autonomous engine: ${data.tasksCreated || 0} tasks created, coverage ${data.coverageRate || '0/9'}`
+      `[CronWorker] Autonomous training engine: ${data.tasksCreated || 0} tasks created, ${data.practicesCreated || 0} practices created`
     );
   } catch (err) {
     if (!err.message?.includes('ECONNREFUSED')) {
@@ -117,7 +117,7 @@ export function startCronWorker() {
     tick();
     _intervalId = setInterval(tick, POLL_INTERVAL_MS);
 
-    // 自主招商引擎：每分钟触发一次检查，真正扫描频率由服务端规则控制
+    // 自主培训引擎：每分钟触发一次检查，真正扫描频率由服务端规则控制
     tickAutonomous();
     _autonomousIntervalId = setInterval(tickAutonomous, 60_000);
   }, 10_000);

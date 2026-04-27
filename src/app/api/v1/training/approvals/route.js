@@ -1,6 +1,6 @@
 import { apiEnvelope } from '@/lib/apiEnvelope';
-import { approvals } from '@/lib/trainingData';
+import { getApprovals } from '@/lib/trainingRuntimeStore';
 
 export function GET() {
-  return apiEnvelope({ approvals });
+  return apiEnvelope({ approvals: getApprovals() });
 }

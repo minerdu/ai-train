@@ -1,12 +1,29 @@
+import { getAgentRun } from '@/lib/trainingRuntimeStore';
+
 export async function GET(_request, context) {
   const { run_id: runId } = await context.params;
   const encoder = new TextEncoder();
+  const run = getAgentRun(runId);
+
+  if (!run) {
+    return Response.json({ error: '未找到AgentRun' }, { status: 404 });
+  }
+
+  const stepMessages = Array.isArray(run.steps) && run.steps.length > 0
+    ? run.steps
+    : ['读取角色状态', '匹配TrainingSkill', '生成训练动作', '完成权限校验'];
   const steps = [
     { event: 'training.agent.run.created', progress: 5, message: '已创建TrainingAgentRun' },
-    { event: 'training.agent.run.progress', progress: 32, message: '正在检查权限和门店数据范围' },
-    { event: 'training.agent.run.progress', progress: 58, message: '正在匹配TrainingSkill和SkillVersion' },
-    { event: 'training.agent.run.progress', progress: 84, message: '正在生成任务卡片并校验Guardrail' },
-    { event: 'training.agent.run.succeeded', progress: 100, message: '运行完成' },
+    ...stepMessages.map((message, index) => ({
+      event: 'training.agent.run.progress',
+      progress: Math.min(90, 18 + index * Math.floor(70 / Math.max(stepMessages.length, 1))),
+      message,
+    })),
+    {
+      event: run.status === 'waiting_approval' ? 'training.agent.run.waiting_approval' : 'training.agent.run.succeeded',
+      progress: run.progress_percent || 100,
+      message: run.current_message || '运行完成',
+    },
   ];
 
   const stream = new ReadableStream({

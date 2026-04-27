@@ -1,6 +1,6 @@
 import { apiEnvelope } from '@/lib/apiEnvelope';
-import { getPracticeOverviewDTO } from '@/lib/trainingData';
+import { getPracticeOverview } from '@/lib/trainingRuntimeStore';
 
 export function GET() {
-  return apiEnvelope(getPracticeOverviewDTO());
+  return apiEnvelope(getPracticeOverview());
 }

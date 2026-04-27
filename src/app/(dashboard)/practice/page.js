@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { apiFetch } from '@/lib/basePath';
 import { abilityProfile, getPracticeOverviewDTO } from '@/lib/trainingData';
 import styles from './page.module.css';
 
@@ -20,15 +21,42 @@ const STAGE_COLORS = {
   history: '#07C160',
 };
 
+async function parseEnvelope(res, fallbackMessage) {
+  const payload = await res.json().catch(() => null);
+  if (!res.ok) {
+    throw new Error(payload?.message || payload?.error?.message || fallbackMessage);
+  }
+  return payload?.data || payload;
+}
+
 export default function PracticePage() {
-  const dto = getPracticeOverviewDTO();
+  const [dto, setDto] = useState(() => getPracticeOverviewDTO());
   const [stageTab, setStageTab] = useState('all');
   const [viewTab, setViewTab] = useState('scenarios');
   const [showGroupMenu, setShowGroupMenu] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loadError, setLoadError] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const loadPractice = useCallback(async () => {
+    setLoadError('');
+    try {
+      const data = await parseEnvelope(await apiFetch('/api/v1/training/practice/overview'), '加载实战训练失败');
+      setDto(data);
+    } catch (error) {
+      setLoadError(error.message || '加载实战训练失败');
+    }
+  }, []);
+
+  useEffect(() => {
+    loadPractice();
+  }, [loadPractice]);
+
+  const ability = dto.ability_profile || abilityProfile;
+  const allScenarios = useMemo(() => dto.scenarios || [], [dto.scenarios]);
 
   const scenarios = useMemo(() => {
-    let result = dto.scenarios;
+    let result = allScenarios;
     if (stageTab !== 'all' && stageTab !== 'history') {
       result = result.filter((scenario) => scenario.scenario_type === stageTab);
     }
@@ -36,15 +64,39 @@ export default function PracticePage() {
       result = result.filter((scenario) => scenario.scenario_name.includes(searchTerm));
     }
     return result;
-  }, [dto.scenarios, searchTerm, stageTab]);
+  }, [allScenarios, searchTerm, stageTab]);
 
   const stageCounts = useMemo(() => {
-    const counts = { all: dto.scenarios.length, history: dto.history.length };
-    dto.scenarios.forEach((scenario) => {
+    const counts = { all: allScenarios.length, history: (dto.history || []).length };
+    allScenarios.forEach((scenario) => {
       counts[scenario.scenario_type] = (counts[scenario.scenario_type] || 0) + 1;
     });
     return counts;
-  }, [dto.history.length, dto.scenarios]);
+  }, [allScenarios, dto.history]);
+
+  const generatePractice = async () => {
+    setIsGenerating(true);
+    setLoadError('');
+    try {
+      await parseEnvelope(
+        await apiFetch('/api/ai-command', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            command: '按AI运营信号生成体验转卡、B档案和老客复盘的实战补练',
+            current_tab: 'practice',
+          }),
+        }),
+        '生成实战补练失败',
+      );
+      await loadPractice();
+      setStageTab('field');
+    } catch (error) {
+      setLoadError(error.message || '生成实战补练失败');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   return (
     <div className={styles.leadsPage}>
@@ -91,7 +143,7 @@ export default function PracticePage() {
         </div>
 
         <div className={styles.profileTabs}>
-            {[
+          {[
             { key: 'scenarios', label: '实战训练' },
             { key: 'ability', label: '角色能力' },
           ].map((item) => (
@@ -128,31 +180,37 @@ export default function PracticePage() {
               </svg>
             )}
           </div>
-          <button type="button" className={styles.selectionModeBtn}>生成实战补练</button>
+          <button type="button" className={styles.selectionModeBtn} onClick={generatePractice} disabled={isGenerating}>
+            {isGenerating ? '生成中' : '生成实战补练'}
+          </button>
         </div>
+
+        {loadError ? (
+          <div style={{ padding: '0 24px 12px', color: '#dc2626', fontSize: 13 }}>{loadError}</div>
+        ) : null}
 
         {viewTab === 'ability' ? (
           <section className={styles.groupSection} style={{ padding: '0 24px' }}>
             <div className={styles.groupSectionHead}>
-              <strong>{abilityProfile.name} 角色能力画像</strong>
-              <span>{abilityProfile.role_scope} · Assessment Agent 自动更新</span>
+              <strong>{ability.name} 角色能力画像</strong>
+              <span>{ability.role_scope} · Assessment Agent 自动更新</span>
             </div>
             <div style={{ padding: '0 24px 24px' }}>
-              {Object.entries(abilityProfile.ability).map(([label, value]) => (
+              {Object.entries(ability.ability).map(([label, value]) => (
                 <div key={label} className={styles.leadCard}>
                   <div className={styles.leadCardHeader}>
-                  <div className={styles.leadAvatar} style={{ background: `linear-gradient(135deg, ${value < 70 ? '#f59e0b' : '#2563eb'}, #0f172a)` }}>
-                    {String(value)}
-                  </div>
-                  <div className={styles.leadInfo}>
-                    <div className={styles.leadNameRow}>
-                      <span className={styles.leadName}>{label}</span>
-                      <span className={styles.leadStage} style={{ background: value >= 80 ? '#ecfdf5' : '#fffbeb', color: value >= 80 ? '#047857' : '#b45309' }}>
-                        {value >= 80 ? '已通关' : '需补练'}
-                      </span>
+                    <div className={styles.leadAvatar} style={{ background: `linear-gradient(135deg, ${value < 70 ? '#f59e0b' : '#2563eb'}, #0f172a)` }}>
+                      {String(value)}
                     </div>
-                    <span className={styles.leadCompany}>最近训练：{abilityProfile.last_practice_at}</span>
-                  </div>
+                    <div className={styles.leadInfo}>
+                      <div className={styles.leadNameRow}>
+                        <span className={styles.leadName}>{label}</span>
+                        <span className={styles.leadStage} style={{ background: value >= 80 ? '#ecfdf5' : '#fffbeb', color: value >= 80 ? '#047857' : '#b45309' }}>
+                          {value >= 80 ? '已通关' : '需补练'}
+                        </span>
+                      </div>
+                      <span className={styles.leadCompany}>最近训练：{ability.last_practice_at}</span>
+                    </div>
                   </div>
                   <div className={styles.leadSummary}>Assessment Agent 根据核心训练、实战陪跑和店长审核更新分数，低于80分自动建议补练。</div>
                 </div>
@@ -163,8 +221,8 @@ export default function PracticePage() {
           <div style={{ padding: '0 24px 24px' }}>
             <section className={styles.groupSection} style={{ marginBottom: 12 }}>
               <div className={styles.groupSectionHead}>
-                <strong>{dto.training_map.title}</strong>
-                <span>{dto.training_map.modules.join(' / ')}</span>
+                <strong>{dto.training_map?.title || 'AI培训实战地图'}</strong>
+                <span>{(dto.training_map?.modules || []).join(' / ')}</span>
               </div>
             </section>
             {scenarios.map((scenario) => (
@@ -193,7 +251,7 @@ export default function PracticePage() {
                   </div>
                 </div>
                 <div className={styles.leadTags}>
-                  {scenario.must_cover_points.map((point) => (
+                  {(scenario.must_cover_points || []).map((point) => (
                     <span key={point} className={styles.tagChip} style={{ borderColor: '#dbeafe', color: '#2563eb', background: '#eff6ff' }}>{point}</span>
                   ))}
                 </div>
