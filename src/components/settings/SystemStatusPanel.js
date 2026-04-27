@@ -1,0 +1,121 @@
+'use client';
+
+import { useCallback, useEffect, useState } from 'react';
+import { apiFetch } from '@/lib/basePath';
+import styles from './SystemStatusPanel.module.css';
+
+const KB_LABELS = {
+  zhipu: '智谱知识库',
+  dify: 'Dify 知识库',
+  custom: '指定知识库',
+  default: '默认知识上下文',
+  none: '未启用知识库',
+};
+
+function formatKnowledgeBaseDetail(aiData) {
+  const source = aiData?.kbSource || 'zhipu';
+  const label = KB_LABELS[source] || source;
+  return aiData?.kbId ? `${label} / ${aiData.kbId}` : label;
+}
+
+export default function SystemStatusPanel() {
+  const [statuses, setStatuses] = useState({
+    aiModel: { status: 'warning', label: 'AI 大模型', detail: 'OPENAI / gpt-5.4' },
+    knowledgeBase: { status: 'online', label: '知识库', detail: '智谱知识库 / training-sop-kb' },
+    opsContext: { status: 'warning', label: 'AI运营系统', detail: 'AI-OPS-APP / 单向只读待授权' },
+    skillCenter: { status: 'online', label: 'Skill中心', detail: '已加载 樊文花Skill' },
+  });
+
+  const checkStatuses = useCallback(async () => {
+    try {
+      const [aiRes, readinessRes] = await Promise.all([
+        apiFetch('/api/settings/ai-model', { cache: 'no-store' }),
+        apiFetch('/api/integrations/readiness', { cache: 'no-store' }),
+      ]);
+
+      const aiData = aiRes.ok ? await aiRes.json() : null;
+      const readinessData = readinessRes.ok ? await readinessRes.json() : null;
+      const opsItem = readinessData?.items?.find((item) => ['ops', 'training_ops'].includes(item.channel));
+
+      setStatuses((prev) => ({
+        ...prev,
+        aiModel: {
+          ...prev.aiModel,
+          status: aiData?.enabled && aiData?.apiKeyMasked ? 'online' : 'offline',
+          detail: `${(aiData?.provider || 'openai').toUpperCase()} / ${aiData?.modelName || 'gpt-5.4'}`,
+        },
+        knowledgeBase: {
+          ...prev.knowledgeBase,
+          status: aiData?.kbSource && aiData.kbSource !== 'none' ? 'online' : 'warning',
+          detail: formatKnowledgeBaseDetail(aiData),
+        },
+        opsContext: {
+          ...prev.opsContext,
+          status: opsItem?.status?.key === 'ready'
+            ? 'online'
+            : opsItem?.status?.key === 'partial'
+              ? 'warning'
+              : 'warning',
+          detail: opsItem?.status?.key === 'ready'
+            ? 'AI-OPS-APP / 单向只读已联调'
+            : opsItem?.status?.key === 'partial'
+              ? 'AI-OPS-APP / 单向只读部分配置'
+              : 'AI-OPS-APP / 单向只读待授权',
+        },
+        skillCenter: {
+          ...prev.skillCenter,
+          status: 'online',
+          detail: '已加载 樊文花Skill',
+        },
+      }));
+    } catch {
+      setStatuses((prev) => ({
+        ...prev,
+        aiModel: { ...prev.aiModel, status: 'warning', detail: 'OPENAI / gpt-5.4' },
+        knowledgeBase: { ...prev.knowledgeBase, status: 'online', detail: '智谱知识库 / training-sop-kb' },
+        opsContext: { ...prev.opsContext, status: 'warning', detail: 'AI-OPS-APP / 单向只读待授权' },
+        skillCenter: { ...prev.skillCenter, status: 'online', detail: '已加载 樊文花Skill' },
+      }));
+    }
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      void checkStatuses();
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [checkStatuses]);
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'online': return 'var(--color-success, #07C160)';
+      case 'offline': return 'var(--color-error, #FF4D4F)';
+      case 'warning': return 'var(--color-warning, #FAAD14)';
+      default: return 'var(--color-text-tertiary)';
+    }
+  };
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <span className={styles.headerIcon}>📡</span>
+        <span className={styles.headerTitle}>系统状态</span>
+        <button className={styles.refreshBtn} onClick={checkStatuses}>
+          🔄
+        </button>
+      </div>
+      <div className={styles.statusGrid}>
+        {Object.entries(statuses).map(([key, item]) => (
+          <div key={key} className={styles.statusItem}>
+            <div className={styles.statusDot} style={{ background: getStatusColor(item.status) }} />
+            <div className={styles.statusInfo}>
+              <span className={styles.statusLabel}>{item.label}</span>
+              <span className={styles.statusDetail}>{item.detail || '检查中...'}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

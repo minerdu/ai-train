@@ -1,0 +1,536 @@
+.page {
+  height: 100%;
+  overflow-y: auto;
+  background:
+    radial-gradient(circle at top right, var(--role-color-soft) 0, rgba(255, 255, 255, 0) 260px),
+    linear-gradient(180deg, #ffffff 0%, var(--color-bg-base) 38%);
+  padding: 14px;
+}
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 292px;
+  gap: 12px;
+}
+
+.heroIdentity,
+.accountPanel,
+.spotlight,
+.signalPanel,
+.aiPanel,
+.permissionBand {
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 26px rgba(15, 23, 42, 0.045);
+}
+
+.heroIdentity {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px;
+  min-width: 0;
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--role-color), #111827);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+.heroText {
+  min-width: 0;
+}
+
+.eyebrow,
+.sectionKicker {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--role-color-soft);
+  color: var(--role-color);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.heroText h2 {
+  margin: 9px 0 5px;
+  color: var(--color-text-primary);
+  font-size: 21px;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.heroText p {
+  margin: 0;
+  max-width: 720px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.heroStats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.heroStat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 42px;
+  padding: 9px 10px;
+  border: 1px solid var(--role-color-line);
+  border-radius: 12px;
+  background: rgba(248, 250, 252, 0.76);
+}
+
+.heroStat em {
+  color: var(--color-text-tertiary);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 850;
+}
+
+.heroStat strong {
+  color: var(--role-color);
+  font-size: 17px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.accountPanel {
+  padding: 12px;
+}
+
+.accountLabel {
+  display: block;
+  margin: 2px 2px 9px;
+  color: var(--color-text-tertiary);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.accountSwitch {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 7px;
+}
+
+.accountButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 10px;
+  border: 1px solid var(--color-border-light);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.18s ease;
+}
+
+.accountButton strong {
+  color: var(--color-text-primary);
+  font-size: 13px;
+}
+
+.accountButton span {
+  color: var(--color-text-tertiary);
+  font-size: 11px;
+}
+
+.accountButtonActive {
+  border-color: var(--role-color);
+  background: var(--role-color-soft);
+}
+
+.accountButtonActive strong,
+.accountButtonActive span {
+  color: var(--role-color);
+}
+
+.viewSwitch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid var(--color-border-light);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.viewSwitch > div {
+  display: flex;
+  gap: 7px;
+}
+
+.viewSwitch strong {
+  color: var(--role-color);
+}
+
+.viewButton {
+  padding: 7px 12px;
+  border: none;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.viewButtonActive {
+  background: var(--role-color);
+  color: #fff;
+}
+
+.spotlight {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 170px;
+  gap: 16px;
+  padding: 18px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.82)),
+    radial-gradient(circle at top right, var(--role-color-soft), transparent 44%);
+}
+
+.spotlightMain h3 {
+  margin: 10px 0 6px;
+  color: var(--color-text-primary);
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.spotlightMain p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.progressTrack {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e2e8f0;
+  margin: 16px 0 8px;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--role-color), #111827);
+}
+
+.stageFoot {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--color-text-tertiary);
+  font-size: 12px;
+}
+
+.spotlightMetric {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 14px;
+  background: #111827;
+  color: #fff;
+}
+
+.spotlightMetric span {
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.spotlightMetric strong {
+  font-size: 34px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.spotlightMetric a {
+  width: fit-content;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 850;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+.actionGrid,
+.signalGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.actionCard,
+.signalCard {
+  display: flex;
+  flex-direction: column;
+  min-height: 126px;
+  gap: 9px;
+  padding: 15px;
+  border-radius: 15px;
+  border: 1px solid;
+  text-decoration: none;
+  overflow: hidden;
+}
+
+.actionCard {
+  color: var(--color-text-primary);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.actionCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.actionTone1 {
+  background: #eff6ff;
+  border-color: rgba(37, 99, 235, 0.16);
+}
+
+.actionTone2 {
+  background: #ecfdf5;
+  border-color: rgba(16, 185, 129, 0.16);
+}
+
+.actionTone3 {
+  background: #fff7ed;
+  border-color: rgba(245, 158, 11, 0.18);
+}
+
+.actionIndex {
+  color: var(--role-color);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.actionCard strong,
+.signalCard strong {
+  color: var(--color-text-primary);
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.actionCard p,
+.signalCard p {
+  margin: 0;
+  flex: 1;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.actionCard em,
+.signalCard em {
+  color: var(--role-color);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.signalPanel,
+.aiPanel,
+.permissionBand {
+  padding: 16px;
+}
+
+.panelHead,
+.permissionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.panelHead > div,
+.permissionHead > div {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.panelHead strong,
+.permissionHead strong {
+  color: var(--color-text-primary);
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.panelHead span,
+.panelHead a,
+.permissionHead a {
+  color: var(--color-text-tertiary);
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.permissionHead a {
+  color: var(--role-color);
+}
+
+.signalCard {
+  min-height: 108px;
+}
+
+.signalTone1 {
+  border-color: rgba(37, 99, 235, 0.14);
+  background: linear-gradient(180deg, #eff6ff 0%, #fff 84%);
+}
+
+.signalTone2 {
+  border-color: rgba(239, 68, 68, 0.14);
+  background: linear-gradient(180deg, #fef2f2 0%, #fff 84%);
+}
+
+.signalTone3 {
+  border-color: rgba(139, 92, 246, 0.14);
+  background: linear-gradient(180deg, #f5f3ff 0%, #fff 84%);
+}
+
+.signalCard span {
+  color: var(--color-text-tertiary);
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.promptGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.promptChip {
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 13px;
+  background: var(--role-color-soft);
+  border: 1px solid var(--role-color-line);
+  color: var(--role-color);
+  font-size: 12px;
+  font-weight: 850;
+  line-height: 1.5;
+  text-decoration: none;
+}
+
+.permissionBand {
+  border-color: var(--role-color-line);
+}
+
+.permissionList {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.permissionList span {
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 13px;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.55;
+}
+
+.permissionTone1 {
+  background: #eff6ff;
+  border: 1px solid rgba(37, 99, 235, 0.14);
+}
+
+.permissionTone2 {
+  background: #ecfdf5;
+  border: 1px solid rgba(16, 185, 129, 0.14);
+}
+
+.permissionTone3 {
+  background: #fff7ed;
+  border: 1px solid rgba(245, 158, 11, 0.16);
+}
+
+@media (max-width: 1180px) {
+  .hero,
+  .spotlight {
+    grid-template-columns: 1fr;
+  }
+
+  .accountSwitch {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .heroStats,
+  .actionGrid,
+  .signalGrid,
+  .promptGrid,
+  .permissionList {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .page {
+    padding: 12px;
+  }
+
+  .heroIdentity {
+    align-items: flex-start;
+  }
+
+  .accountSwitch {
+    grid-template-columns: 1fr;
+  }
+
+  .stageFoot,
+  .viewSwitch,
+  .panelHead,
+  .permissionHead {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
