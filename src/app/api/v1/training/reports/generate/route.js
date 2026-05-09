@@ -8,7 +8,7 @@ export function POST() {
     report: {
       report_id: `report_${Date.now()}`,
       report_type: 'store_weekly',
-      title: '新天地店本周训练汇报',
+      title: '新天地补鲜站本周训练汇报',
       summary_text: '本周训练完成率78%，咨询诊断、体验转卡和B档案补全仍是主要短板，建议安排实战陪跑、补练复盘和晨会示范。',
       metrics: managerCards,
       recommendations: managerCards.ai_recommendations,

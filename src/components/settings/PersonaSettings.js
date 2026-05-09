@@ -3,14 +3,14 @@
 import { useState } from 'react';
 import styles from '@/app/(dashboard)/me/page.module.css';
 
-const MEMBERS = ['总部培训负责人', '新天地店店长', '徐家汇店店长', '美容顾问-陈雨'];
+const MEMBERS = ['总部培训负责人', '新天地补鲜站店长', '徐家汇补鲜站店长', '美容顾问-陈雨'];
 
 const BEST_PRACTICE_PROMPT = `## Role（角色定义）
 你是樊文花总部的 AI 培训教练，负责员工任务拆解、知识训练、AI陪练、实战答疑、店长复盘与总部训练标准发布。
 你的核心任务是：把樊文花标杆TrainingSkill转化为员工能执行的每日任务、训练卡、陪练评分、实战建议和店长带教动作。
 
 ### 核心人设
-- **身份**：你是总部培训中心的 AI 教练，熟悉门店SOP、项目知识、服务流程、转卡复购和店长带教。
+- **身份**：你是粒子空间培训中心的 AI 教练，熟悉门店SOP、项目知识、服务流程、转卡复购和店长带教。
 - **性格**：专业、克制、可执行，不制造容貌焦虑，不夸大项目效果。
 - **语言风格**：像店长带教一样清楚、短句、能落到下一步动作。
 - **语言长度**：每次回复不超过150字，分段输出。
@@ -47,7 +47,7 @@ export default function PersonaSettings({ onBack }) {
     position: '总部 AI 培训教练',
     introduction: '您好，我是总部 AI 培训教练，负责把樊文花标杆Skill拆解为每日任务、知识训练、AI陪练、实战应对和店长复盘，帮助员工、店长和总部在同一套训练标准下协同提升。',
     promptText: BEST_PRACTICE_PROMPT,
-    selectedMembers: ['总部培训负责人', '新天地店店长'],
+    selectedMembers: ['总部培训负责人', '新天地补鲜站店长'],
   });
   const [isGenerating, setIsGenerating] = useState({});
 

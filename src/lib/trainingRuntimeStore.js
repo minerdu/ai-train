@@ -94,7 +94,7 @@ function normalizeSeedTask(task) {
     reviewedBy: 'ai',
     reviewNotes: '种子训练任务，来自产品开发文档与TrainingSkill。',
     source_skill_name: skill?.skill_name || 'TrainingSkill',
-    assigned_to: task.task_type === 'manager' ? '店长账号' : '新天地店员工',
+    assigned_to: task.task_type === 'manager' ? '店长账号' : '新天地补鲜站员工',
   };
 }
 
@@ -156,7 +156,7 @@ function initState() {
         role: 'hq',
         owner: '培训总部',
         completionRate: 0.69,
-        weakPoint: '徐家汇店B档案缺失',
+        weakPoint: '徐家汇补鲜站B档案缺失',
         skillVersionId: 'sv_customer_361_profile_200',
         nextAction: '生成跨店抽检建议，保留审批',
       },
@@ -226,7 +226,7 @@ function buildTaskFromSpec(spec) {
     approvalStatus: spec.needApproval ? 'pending' : 'approved',
     executeStatus: spec.needApproval ? 'draft' : 'scheduled',
     completion_rule: spec.completionRule || '完成训练并提交证据或复盘结果',
-    assigned_to: spec.assignedTo || '新天地店员工',
+    assigned_to: spec.assignedTo || '新天地补鲜站员工',
     reviewedBy: spec.needApproval ? 'human_required' : 'ai',
     reviewNotes: spec.needApproval ? '命中培训权限或AI运营边界，需人工确认。' : 'TrainingReviewAgent自动通过：标准培训任务。',
     createdAt: nowIso(),
@@ -303,9 +303,9 @@ function buildCommandSpecs(command, run) {
   const isHq = /总部|跨店|抽检|Skill/.test(command);
   const isMakeup = /补练|低完成|低分|落后|未完成/.test(command);
   const targets = isHq
-    ? ['新天地店', '徐家汇店', '虹桥店']
+    ? ['新天地补鲜站', '徐家汇补鲜站', '虹桥补鲜站']
     : isManager
-      ? ['店长林夏', '新天地店员工组']
+      ? ['店长林夏', '新天地补鲜站员工组']
       : ['陈雨', '王珊', '李婷', '周敏'];
 
   const taskSpecs = [];
@@ -356,7 +356,7 @@ function buildCommandSpecs(command, run) {
         ? '根据员工完成率、能力画像和培训计划，生成针对咨询诊断、手法项目或顾客经营361的补练任务。'
         : '根据培训计划和TrainingSkill生成核心训练、实战陪跑、证据提交和复盘要求。',
       taskType: isMakeup ? 'makeup' : 'practice',
-      assignedTo: '新天地店员工',
+      assignedTo: '新天地补鲜站员工',
       skillVersionId: skill.version_id,
       runId: run.run_id,
       needApproval,
@@ -370,7 +370,7 @@ function buildCommandSpecs(command, run) {
       description: practiceSpecs[0].state,
       taskType: 'real_action',
       sourceType: 'ops_signal',
-      assignedTo: isManager ? '店长账号' : '新天地店员工',
+      assignedTo: isManager ? '店长账号' : '新天地补鲜站员工',
       skillVersionId: skill.version_id,
       runId: run.run_id,
       needApproval,
@@ -545,7 +545,7 @@ export function createManualTask(payload = {}) {
     skillVersionId: payload.skillVersionId || 'sv_30day_store_landing_200',
     runId: run.run_id,
     needApproval: payload.needApproval !== false,
-    assignedTo: payload.leadName || payload.assignedTo || '新天地店员工',
+    assignedTo: payload.leadName || payload.assignedTo || '新天地补鲜站员工',
     scheduledAt: payload.scheduledAt || null,
   });
 }
@@ -697,7 +697,7 @@ export function runAutonomousTrainingEngine({ force = false } = {}) {
       description: `${signal.source}触发：${signal.label}。请进入实战Tab完成陪跑、风险话术检查和店长复盘。`,
       taskType: 'real_action',
       sourceType: 'autonomous_engine',
-      assignedTo: '新天地店员工',
+      assignedTo: '新天地补鲜站员工',
       skillVersionId: skill.version_id,
       runId: run.run_id,
       linkedPracticeId: practice.scenario_id,

@@ -27,8 +27,8 @@ const reportData = {
   ],
   highFreqKeywords: ['咨询诊断', '体验转卡', '30天落地', 'B档案补全', '六大流程', '5A体验'],
   keyEmployees: [
-    { name: '新天地店-陈雨', reason: '咨询诊断和B档案补全低于80分', action: '生成补练' },
-    { name: '徐家汇店-林可', reason: '六大流程通过，但体验转卡缺下一步动作', action: '店长示范' },
+    { name: '新天地补鲜站-陈雨', reason: '咨询诊断和B档案补全低于80分', action: '生成补练' },
+    { name: '徐家汇补鲜站-林可', reason: '六大流程通过，但体验转卡缺下一步动作', action: '店长示范' },
   ],
   suggestions: [
     { title: '明早晨会', desc: '围绕体验后未办卡做10分钟示范，先复盘体验再给轻选择。', link: '转任务' },

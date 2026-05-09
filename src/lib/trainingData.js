@@ -4,14 +4,14 @@ export const currentUser = {
   store_id: 'store_xintiandi',
   name: '林夏',
   role: 'manager',
-  job_title: '新天地店店长',
+  job_title: '新天地补鲜站店长',
   onboarding_date: '2026-04-01',
 };
 
 export const stores = [
-  { store_id: 'store_xintiandi', name: '新天地店', city: '上海', completion_rate: 0.78, risk_signal_count: 5 },
-  { store_id: 'store_xujiahui', name: '徐家汇店', city: '上海', completion_rate: 0.66, risk_signal_count: 8 },
-  { store_id: 'store_hongqiao', name: '虹桥店', city: '上海', completion_rate: 0.84, risk_signal_count: 3 },
+  { store_id: 'store_xintiandi', name: '新天地补鲜站', city: '上海', completion_rate: 0.78, risk_signal_count: 5 },
+  { store_id: 'store_xujiahui', name: '徐家汇补鲜站', city: '上海', completion_rate: 0.66, risk_signal_count: 8 },
+  { store_id: 'store_hongqiao', name: '虹桥补鲜站', city: '上海', completion_rate: 0.84, risk_signal_count: 3 },
 ];
 
 export const trainingSkills = [
@@ -302,7 +302,7 @@ export const trainingTasks = [
   {
     task_id: 'task_008',
     title: '总部抽检5A体验证据',
-    description: '总部抽检新天地店五感场景与5A体验证据，需店长补交护理间照片和售后回访记录。',
+    description: '总部抽检新天地补鲜站五感场景与5A体验证据，需店长补交护理间照片和售后回访记录。',
     task_type: 'group',
     source_type: 'ai_generated',
     source_skill_version_id: 'sv_5a_experience_200',
@@ -529,7 +529,7 @@ export const approvals = [
     approval_type: 'publish_practice_field_plan',
     risk_level: 'medium',
     status: 'pending',
-    title: '发布30天门店落地训练到新天地店',
+    title: '发布30天门店落地训练到新天地补鲜站',
     impact_scope: '5名员工，18个核心训练与实战陪跑任务',
     recommended_decision: '建议通过，计划只包含训练、作业和店长审核动作。',
     source_agent_run_id: 'run_v3_plan_001',
@@ -588,7 +588,7 @@ export const chatMessages = [
 
 export const storePulse = {
   store_id: 'store_xintiandi',
-  store_name: '新天地店',
+  store_name: '新天地补鲜站',
   signals: [
     { label: '体验后未办卡', value: '+18%', tone: 'warning' },
     { label: 'B档案缺失', value: '23条', tone: 'danger' },
@@ -620,7 +620,7 @@ export const roleWorkspace = {
       key: 'manager',
       label: '店长',
       owner: '林夏',
-      scope: '新天地店',
+      scope: '新天地补鲜站',
       headline: '管理本店员工、审核作业和生成晨会带教',
       stats: [
         { label: '本店员工', value: '18' },
@@ -670,7 +670,7 @@ export const roleDashboardData = {
     label: '员工',
     accountRole: '员工账号',
     owner: '陈雨',
-    title: '新天地店美容师',
+    title: '新天地补鲜站美容师',
     scope: '个人培训与个人实战',
     color: '#0ea5e9',
     visibleFor: ['employee', 'manager'],
@@ -720,7 +720,7 @@ export const roleDashboardData = {
     label: '店长',
     accountRole: '店长账号',
     owner: '林夏',
-    title: '新天地店店长',
+    title: '新天地补鲜站店长',
     scope: '本店培训与员工管理',
     color: '#10b981',
     visibleFor: ['manager'],
@@ -740,7 +740,7 @@ export const roleDashboardData = {
     ],
     planOverview: [
       { title: '店长培训计划', desc: '围绕晨会、带教、员工复盘和门店周报完成管理训练。', status: '进行中' },
-      { title: '本店员工训练计划', desc: '新天地店员工正在执行30天落地第8-14天任务。', status: '需跟进' },
+      { title: '本店员工训练计划', desc: '新天地补鲜站员工正在执行30天落地第8-14天任务。', status: '需跟进' },
       { title: '门店实战陪跑', desc: '体验转卡、B档案补全、咨询诊断是本周重点。', status: '重点' },
     ],
     staffTrainingSummary: [
@@ -804,13 +804,13 @@ export const roleDashboardData = {
       { label: '总部抽检通过', value: '76%', desc: '5A体验证据质量差异较大。' },
     ],
     storeTrainingSummary: [
-      { store: '新天地店', progress: '78%', risk: '体验转卡' },
-      { store: '徐家汇店', progress: '66%', risk: 'B档案缺失' },
-      { store: '虹桥店', progress: '84%', risk: '证据补交' },
+      { store: '新天地补鲜站', progress: '78%', risk: '体验转卡' },
+      { store: '徐家汇补鲜站', progress: '66%', risk: 'B档案缺失' },
+      { store: '虹桥补鲜站', progress: '84%', risk: '证据补交' },
     ],
     gapsTitle: '计划执行风险',
     gaps: [
-      { title: '徐家汇店进度偏低', value: '66%', desc: '员工B档案补全和咨询诊断任务滞后。' },
+      { title: '徐家汇补鲜站进度偏低', value: '66%', desc: '员工B档案补全和咨询诊断任务滞后。' },
       { title: '5A体验证据不齐', value: '12项', desc: '总部抽检需要明确照片、视频和售后记录标准。' },
       { title: 'Skill版本反馈', value: '待汇总', desc: '需要从门店复盘中沉淀下一版训练内容。' },
     ],

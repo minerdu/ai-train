@@ -2,8 +2,8 @@ import "./globals.css";
 import { ToastProvider } from "@/components/common/Toast";
 
 export const metadata = {
-  title: "AI 培训 — 智能培训管理系统",
-  description: "美容美业中小企业 AI 自主培训引擎，聚合任务、实战、角色权限、Skill 和审批治理",
+  title: "粒子空间 AI 培训 — 智能培训管理系统",
+  description: "粒子空间补鲜站 AI 自主培训引擎，聚合任务、实战、角色权限、Skill 和审批治理",
 };
 
 export const viewport = {

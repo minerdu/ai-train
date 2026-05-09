@@ -11,7 +11,7 @@ export default function TrainingOperationLoginChoiceView() {
         </div>
         <div className={styles.subAccountCard}>
           <div className={styles.subAccountInfo}>
-            <span className={styles.subAccountName}>樊文花AI培训中心</span>
+            <span className={styles.subAccountName}>粒子空间AI培训中心</span>
             <span className={styles.subAccountPerm}>training@fanwenhua.com · 培训管理员</span>
           </div>
           <span className={`${styles.subAccountStatus} ${styles.statusOnline}`}>已验证</span>

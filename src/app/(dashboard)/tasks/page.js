@@ -293,7 +293,7 @@ export default function TasksPage() {
 
                 <div className={styles.taskFooter}>
                   <span className={styles.taskTime}>⏰ {task.due_at}</span>
-                  <span className={styles.taskCustomer}>📤 分配给 {task.assigned_to || '新天地店员工'}</span>
+                  <span className={styles.taskCustomer}>📤 分配给 {task.assigned_to || '新天地补鲜站员工'}</span>
                 </div>
 
                 <div className={styles.taskActions} onClick={(event) => event.stopPropagation()}>

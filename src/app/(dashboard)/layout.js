@@ -213,7 +213,7 @@ export default function DashboardLayout({ children }) {
         <div className={styles.accountsTop}>
           <div
             className={`${styles.accountBadge} ${activeWorkspace === 'main' ? styles.accountActive : ''}`}
-            title="总控面板"
+            title="粒子空间培训中心"
             onClick={() => handleWorkspaceSwitch('main')}
             style={{ background: '#2563eb' }}
           >
@@ -224,32 +224,32 @@ export default function DashboardLayout({ children }) {
           <div className={styles.mainAccountDivider} />
           <div
             className={`${styles.accountBadge} ${activeWorkspace === 'sub_1' ? styles.accountActive : ''}`}
-            title="新天地店"
+            title="新天地补鲜站"
             onClick={() => handleWorkspaceSwitch('sub_1')}
             style={{ background: '#722ED1' }}
           >
-            <span className={styles.mainAccountIcon} style={{ fontSize: '11px', fontWeight: 'bold', color: '#fff' }}>新店</span>
+            <span className={styles.mainAccountIcon} style={{ fontSize: '11px', fontWeight: 'bold', color: '#fff' }}>新站</span>
             <div className={`${styles.accountStatus} ${styles.statusOnline}`} />
           </div>
           <div
             className={`${styles.accountBadge} ${activeWorkspace === 'sub_2' ? styles.accountActive : ''}`}
-            title="徐家汇店"
+            title="徐家汇补鲜站"
             onClick={() => handleWorkspaceSwitch('sub_2')}
             style={{ background: '#FA8C16' }}
           >
-            <span className={styles.mainAccountIcon} style={{ fontSize: '11px', fontWeight: 'bold', color: '#fff' }}>徐店</span>
+            <span className={styles.mainAccountIcon} style={{ fontSize: '11px', fontWeight: 'bold', color: '#fff' }}>徐站</span>
             <div className={`${styles.accountStatus} ${styles.statusOnline}`} />
           </div>
           <div
             className={`${styles.accountBadge} ${activeWorkspace === 'sub_3' ? styles.accountActive : ''}`}
-            title="虹桥店"
+            title="虹桥补鲜站"
             onClick={() => handleWorkspaceSwitch('sub_3')}
             style={{ background: '#13C2C2' }}
           >
-            <span className={styles.mainAccountIcon} style={{ fontSize: '11px', fontWeight: 'bold', color: '#fff' }}>虹店</span>
+            <span className={styles.mainAccountIcon} style={{ fontSize: '11px', fontWeight: 'bold', color: '#fff' }}>虹站</span>
             <div className={`${styles.accountStatus} ${styles.statusOnline}`} />
           </div>
-          <button className={styles.addAccountBtn} title="添加门店">+</button>
+          <button className={styles.addAccountBtn} title="添加补鲜站">+</button>
         </div>
         <div className={styles.accountsBottom}>
           <NotificationDropdown />

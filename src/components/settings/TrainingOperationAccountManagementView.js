@@ -4,10 +4,10 @@ import styles from './TrainingOperationAccountManagementView.module.css';
 
 export default function TrainingOperationAccountManagementView() {
   const accountMatrix = [
-    { name: '总部培训中心', role: 'TrainingSkill发布与跨店审批', id: 'train_hq_01', count: '6,000+', status: '在线', latency: '18ms' },
-    { name: '新天地店训练空间', role: '店长带教、任务分配与补练审批', id: 'train_store_01', count: '18', status: '在线', latency: '26ms' },
-    { name: '徐家汇店训练空间', role: '员工陪练、群组作业与门店日报', id: 'train_store_02', count: '15', status: '在线', latency: '31ms' },
-    { name: '虹桥店训练空间', role: '30天落地与六大流程补练', id: 'train_store_03', count: '12', status: '离线', latency: '-' },
+    { name: '粒子空间培训中心', role: 'TrainingSkill发布与跨店审批', id: 'train_hq_01', count: '6,000+', status: '在线', latency: '18ms' },
+    { name: '新天地补鲜站训练空间', role: '店长带教、任务分配与补练审批', id: 'train_store_01', count: '18', status: '在线', latency: '26ms' },
+    { name: '徐家汇补鲜站训练空间', role: '员工陪练、群组作业与门店日报', id: 'train_store_02', count: '15', status: '在线', latency: '31ms' },
+    { name: '虹桥补鲜站训练空间', role: '30天落地与六大流程补练', id: 'train_store_03', count: '12', status: '离线', latency: '-' },
   ];
 
   return (
@@ -16,12 +16,12 @@ export default function TrainingOperationAccountManagementView() {
         <div className={styles.mainHeader}>
           <div className={styles.avatar}>训</div>
           <div>
-            <h3 className={styles.mainTitle}>樊文花AI培训中心</h3>
+            <h3 className={styles.mainTitle}>粒子空间AI培训中心</h3>
             <div className={styles.tags}>
               <span className={styles.tagId}>ID: TRAIN-204811</span>
               <span className={styles.tagVerify}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                樊文花培训认证
+                粒子空间培训认证
               </span>
             </div>
           </div>
@@ -38,7 +38,7 @@ export default function TrainingOperationAccountManagementView() {
           <div className={styles.infoRow}>
             <label className={styles.infoLabel}>登录名</label>
             <div className={styles.infoContent}>
-              <input type="text" value="training_admin_fanwenhua" readOnly className={styles.infoBox} />
+              <input type="text" value="training_admin_particle_space" readOnly className={styles.infoBox} />
               <button className={styles.editBtn}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
               </button>
